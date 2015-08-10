@@ -153,7 +153,7 @@ public class PopStats {
             String chr = vcf.getContig();
             int pos = vcf.getStart();
             String variant = vcf.getType().name();
-            String annotation = (String)vcf.getAttribute("ANN");
+            String annotation = vcf.getAttributeAsString("ANN", "");
             String ref = vcf.getReference().getBaseString();
             // NOTE: I'm assuming biallelic to save time here! This should be modified for multiple alleles
             String alt = vcf.getAlternateAllele(0).getBaseString();
