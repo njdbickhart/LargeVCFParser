@@ -235,6 +235,9 @@ public class PopStats {
                         
                         if(regulatory)
                             regCount.get(s).printOut(chr, pos, ansegs[4], ref, alt, vcffreq);
+                        
+                        // Zero out the frequency count
+                        genotypePCount.get(s).setCount(0);
                     });
         });
         
