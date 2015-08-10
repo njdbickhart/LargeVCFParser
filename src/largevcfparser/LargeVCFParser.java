@@ -18,6 +18,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import modes.PopStats;
 
 /**
  *
@@ -41,7 +42,12 @@ public class LargeVCFParser {
         
         switch(cmd.CurrentMode){
             case "popstats" :
-                
+                PopStats popstats = new PopStats(cmd);
+                popstats.run();
+                break;
+            default:
+                System.out.println("Error! Mode not recognized!");
+                System.exit(-1);
         }
     }
     
