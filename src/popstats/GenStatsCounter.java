@@ -5,6 +5,7 @@
  */
 package popstats;
 
+import Utils.IntCounter;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,12 +26,14 @@ public class GenStatsCounter {
     private final Map<String, Map<String, Integer>> VariantClass = new HashMap<>();
     private final Map<String, Map<String, Integer>> VariantEffects = new HashMap<>();
     private final Map<String, Map<String, Integer>> TSTV = new HashMap<>();
-    private final String[] VariantTypes = {"SNP", "INS", "DEL"};
+    private final Map<String, IntCounter> transitions = new HashMap<>();
+    private final Map<String, IntCounter> transversions = new HashMap<>();
+    private final String[] VariantTypes = {"SNP", "INDEL"};
     private final String[] VariantClasses = {"HIGH", "LOW", "MODERATE"};
-    private final String[] VariantEffectTypes = {"MISSENSE", "NONSENSE", "SILENT", "3_prime_UTR", "frameshift", "5_prime_UTR", "downstream", "splice_acceptor", "splice_donator"};
+    private final String[] VariantEffectTypes = {"MISSENSE", "NONSENSE", "SILENT", "3_prime_UTR_variant", "frameshift_variant", "5_prime_UTR_variant", "upstream_gene_variant", "downstream_gene_variant", "splice_region_variant"};
     /*
     [output].[population].stats :
-        chr snps    INS DEL HIGH LOW MODERATE   MISSENSE    NONSENSE    SILENT  3_prime_UTR frameshift  5_prime_UTR downstream splice_acceptor  splice_donator  transitions transversions Ts/Tv
+        chr snps    INDEL HIGH LOW MODERATE   MISSENSE    NONSENSE    SILENT  3_prime_UTR frameshift  5_prime_UTR downstream splice_acceptor  splice_donator  transitions transversions Ts/Tv
                 
     */            
     
@@ -44,6 +47,11 @@ public class GenStatsCounter {
             this.VariantClass.put(chr, new HashMap<>());
         if(!this.TSTV.containsKey(chr))
             this.TSTV.put(chr, new HashMap<>());
+        
+        if(!this.transitions.containsKey(chr))
+            this.transitions.put(chr, new IntCounter());
+        if(!this.transversions.containsKey(chr))
+            this.transversions.put(chr, new IntCounter());
         
         if(!this.TSTV.get(chr).containsKey("Transition"))
             this.TSTV.get(chr).put("Transition", 0);
@@ -71,21 +79,23 @@ public class GenStatsCounter {
         
         if(VariantType.equals("SNP")){
             if(this.TransitionCheck(Ref, Alt)){
-                this.TSTV.get(chr).put("Transition", this.TSTV.get(chr).get("Transition") + 1);
+                //this.TSTV.get(chr).put("Transition", this.TSTV.get(chr).get("Transition") + 1);
+                this.transitions.get(chr).increment();
             }else{
-                this.TSTV.get(chr).put("Transversion", this.TSTV.get(chr).get("Transversion") + 1);
+                //this.TSTV.get(chr).put("Transversion", this.TSTV.get(chr).get("Transversion") + 1);
+                this.transversions.get(chr).increment();
             }
         }
     }
     
     /*
     [output].[population].stats :
-        chr snps    INS DEL HIGH LOW MODERATE   MISSENSE    NONSENSE    SILENT  3_prime_UTR frameshift  5_prime_UTR downstream splice_acceptor  splice_donator  transitions transversions Ts/Tv
+        chr snps    INDEL HIGH LOW MODERATE   MISSENSE    NONSENSE    SILENT  3_prime_UTR frameshift  5_prime_UTR downstream splice_acceptor  splice_donator  transitions transversions Ts/Tv
                 
     */
     public void PrintOut(String FileName){
         try(BufferedWriter output = Files.newBufferedWriter(Paths.get(FileName))){
-            output.write("chr\tSNP\tINS\tDEL\tHIGH\tLOW\tMODERATE\tMISSENSE\tNONSENSE\tSILENT\t3_prime_UTR\tframeshift\t5_prime_UTR\tdownstream\tsplice_acceptor\tsplice_donator\tTransitions\tTransversions\tTS/TV" + System.lineSeparator());
+            output.write("chr\tSNP\tINDEL\tHIGH\tLOW\tMODERATE\tMISSENSE\tNONSENSE\tSILENT\t3_prime_UTR\tframeshift\t5_prime_UTR\tdownstream\tsplice_acceptor\tsplice_donator\tTransitions\tTransversions\tTS/TV" + System.lineSeparator());
             for(String chr : this.TSTV.keySet()){
                 output.write(chr);
                 for(String Vtype : this.VariantTypes){
@@ -125,8 +135,10 @@ public class GenStatsCounter {
                 }
                 
                 if(this.TSTV.containsKey(chr)){
-                    int ts = this.TSTV.get(chr).get("Transition");
-                    int tv = this.TSTV.get(chr).get("Transversion");
+                    //int ts = this.TSTV.get(chr).get("Transition");
+                    //int tv = this.TSTV.get(chr).get("Transversion");
+                    int ts = this.transitions.get(chr).getCount();
+                    int tv = this.transversions.get(chr).getCount();
                     double tstv = (double)ts / (double)tv;
                     
                     output.write("\t" + ts + "\t" + tv + "\t" + tstv + System.lineSeparator());

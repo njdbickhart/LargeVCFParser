@@ -108,6 +108,8 @@ public class GeneVarCounter {
     
     public void closeHandle(){
         try {
+            // check if this hasn't already been printed out
+            this.printOut(this.chr);
             this.handle.close();
         } catch (IOException ex) {
             log.log(Level.SEVERE, "[GENEVAR] Error closing handle!", ex);

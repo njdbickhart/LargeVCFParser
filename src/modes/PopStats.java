@@ -165,25 +165,36 @@ public class PopStats {
                     .map(p -> p.getKey() + "=" + vcf.getAttributeAsString(p.getKey(), ""))
                     .reduce("", (a, b) -> a + ";" + b);
             
-            String[] ansegs = annotation.split("|");
+            String[] ansegs = annotation.split("\\|");
             String[] vEffects = ansegs[1].split("&");
+            
+            final boolean extraINS = (ref.length() < alt.length());
+            final boolean extraDEL = (ref.length() > alt.length());
             final boolean regulatory = isRegulatoryRegion(vEffects);
             
             // Now, loop through the genotypes and count if the variant is present
             vcf.getGenotypesOrderedByName().forEach((genotype) -> {
                 if(popLookup.containsKey(genotype.getSampleName())){
                     String pop = popLookup.get(genotype.getSampleName());
+                    if(genotype.isHet()){
+                        genotypePCount.get(pop).increment();
+                    }else if(genotype.isHomVar()){
+                        for(int x = 0; x < 2; x++){
+                            genotypePCount.get(pop).increment();
+                        }
+                    }
+                    boolean INDEL = false;
                     for(String v : vEffects){                        
                         if(this.annotationConverter.containsKey(v))
                             v = this.annotationConverter.get(v);
+                        if(v.equals("INS") || v.equals("DEL"))
+                            INDEL = true;
                         if(genotype.isHet()){
-                            genotypePCount.get(pop).increment();
                             genStats.get(pop).incrementStats(chr, variant, ansegs[2], v, ref, alt);
                             if(regulatory)
                                 regCount.get(pop).incPop();
                         }else if(genotype.isHomVar()){
                             for(int x = 0; x < 2; x++){
-                                genotypePCount.get(pop).increment();
                                 genStats.get(pop).incrementStats(chr, variant, ansegs[2], v, ref, alt);
                                 if(regulatory)
                                     regCount.get(pop).incPop();
@@ -199,7 +210,7 @@ public class PopStats {
             }
             
             // Check if we're in a gene
-            if(!ansegs[3].isEmpty() && !ansegs[4].isEmpty()){
+            if(!ansegs[3].isEmpty() && !ansegs[4].isEmpty() && !ansegs[5].equals("intergenic_region")){
                 genotypePCount.keySet().stream()
                         .filter((s) -> genotypePCount.get(s).getCount() > 0)
                         .forEach((s) -> {
