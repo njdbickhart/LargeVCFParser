@@ -168,11 +168,13 @@ public class PopStats {
             String[] ansegs = annotation.split("\\|");
             String[] vEffects = ansegs[1].split("&");
             
+            
             final boolean extraINS = (ref.length() < alt.length());
             final boolean extraDEL = (ref.length() > alt.length());
             final boolean regulatory = isRegulatoryRegion(vEffects);
             
             // Now, loop through the genotypes and count if the variant is present
+            if(ansegs.length > 3){
             vcf.getGenotypesOrderedByName().forEach((genotype) -> {
                 if(popLookup.containsKey(genotype.getSampleName())){
                     String pop = popLookup.get(genotype.getSampleName());
@@ -210,6 +212,7 @@ public class PopStats {
             }
             
             // Check if we're in a gene
+            
             if(!ansegs[3].isEmpty() && !ansegs[4].isEmpty() && !ansegs[5].equals("intergenic_region")){
                 genotypePCount.keySet().stream()
                         .filter((s) -> genotypePCount.get(s).getCount() > 0)
@@ -221,6 +224,7 @@ public class PopStats {
                             }
                         });
             }
+            
             
             /* See if we can print out the data to a pVCF
                 [output].[population].pvcf
@@ -250,6 +254,7 @@ public class PopStats {
                         // Zero out the frequency count
                         genotypePCount.get(s).setCount(0);
                     });
+            }
         });
         
         reader.close();
