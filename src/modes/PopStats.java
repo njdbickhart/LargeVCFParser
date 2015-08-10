@@ -162,7 +162,7 @@ public class PopStats {
             temp.addAll(vcf.getFilters());
             String filter = StrUtils.StrArray.Join(temp, ";");
             String originalInfo = vcf.getAttributes().entrySet().stream()
-                    .map(p -> p.getKey() + "=" + (String) p.getValue())
+                    .map(p -> p.getKey() + "=" + vcf.getAttributeAsString(p.getKey(), ""))
                     .reduce("", (a, b) -> a + ";" + b);
             
             String[] ansegs = annotation.split("|");
