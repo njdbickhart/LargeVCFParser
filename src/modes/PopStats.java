@@ -8,7 +8,6 @@ package modes;
 import GetCmdOpt.SimpleModeCmdLineParser;
 import Utils.IntCounter;
 import htsjdk.variant.variantcontext.Genotype;
-import htsjdk.variant.variantcontext.VariantContext.Type;
 import htsjdk.variant.vcf.VCFFileReader;
 import htsjdk.variant.vcf.VCFHeader;
 import java.io.BufferedReader;
@@ -150,7 +149,7 @@ public class PopStats {
         reader.iterator().forEachRemaining((vcf) -> {
             // Get all the basic information set
             
-            String chr = vcf.getContig();
+            String chr = vcf.getChr();
             int pos = vcf.getStart();
             String variant = vcf.getType().name();
             String annotation = vcf.getAttributeAsString("ANN", "");

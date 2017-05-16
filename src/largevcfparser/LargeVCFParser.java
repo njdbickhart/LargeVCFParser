@@ -18,6 +18,7 @@ import java.util.logging.FileHandler;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import modes.MergeTabVCFs;
 import modes.PopStats;
 
 /**
@@ -26,7 +27,7 @@ import modes.PopStats;
  */
 public class LargeVCFParser {
     private static final Logger log = Logger.getLogger(LargeVCFParser.class.getName());
-    private static String version = "0.0.1";
+    private static String version = "0.0.2";
     
     /**
      * @param args the command line arguments
@@ -44,6 +45,10 @@ public class LargeVCFParser {
             case "popstats" :
                 PopStats popstats = new PopStats(cmd);
                 popstats.run();
+                break;
+            case "mergetab" : 
+                MergeTabVCFs mergetab = new MergeTabVCFs(cmd);
+                mergetab.run();
                 break;
             default:
                 System.out.println("Error! Mode not recognized!");
@@ -99,8 +104,10 @@ public class LargeVCFParser {
                 + "Version: " + version + nl
             + "Usage: java -jar LargeVCFParser.jar [mode] [mode specific options]" + nl
                 + "Modes:" + nl
-                + "\tpopstats\tCalculates SNPEff statistics per population" + nl,
-                "popstats"
+                + "\tpopstats\tCalculates SNPEff statistics per population" + nl
+                + "\tmergetab\tMerges two large tab delimited vcf files" + nl,
+                "popstats",
+                "mergetab"
         );
         
         cmd.AddMode("popstats", 
@@ -119,6 +126,18 @@ public class LargeVCFParser {
                 "pvo", 
                 "pvod", 
                 "populations", "vcf", "output", "debug");
+        
+        cmd.AddMode("mergetab", 
+                "LargeVCFParser mergetab mode: " + nl
+                + "usage: java -jar LargeVCFParser.jar mergetab [options] " + nl
+                + "Required options: " + nl
+                + "\t-f\tFirst tab delimited file with vcf style content (and header)" + nl
+                + "\t-s\tSecond tab delimited file with vcf style content (and header)" + nl
+                + "\t-o\tOutput file name" + nl, 
+                "f:s:o:", 
+                "fso", 
+                "fsod", 
+                "first", "second", "output", "debug");
         
         return cmd;
     }
