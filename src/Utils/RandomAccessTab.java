@@ -174,7 +174,7 @@ public class RandomAccessTab {
         try{
             this.InfoTemp.seek(index);
             byte len = this.InfoTemp.readByte();
-            byte[] block = new byte[len];
+            byte[] block = new byte[Byte.toUnsignedInt(len)];
             this.InfoTemp.read(block);
             
             String convert = new String(block, Charset.defaultCharset());
