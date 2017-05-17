@@ -87,7 +87,7 @@ public class RandomAccessTab {
             }
             if(!Index.get(segs[0]).get(Integer.parseInt(segs[1])).containsKey(segs[3])){
                 Index.get(segs[0]).get(Integer.parseInt(segs[1])).put(segs[3], this.temp.getFilePointer());
-                InfoIndex.get(segs[0]).get(Integer.parseInt(segs[1])).put(segs[3], this.temp.getFilePointer());
+                InfoIndex.get(segs[0]).get(Integer.parseInt(segs[1])).put(segs[3], this.InfoTemp.getFilePointer());
             }
         }catch(IOException ex){
             log.log(Level.SEVERE, "Error accessing temp file in line parser!", ex);
@@ -95,6 +95,8 @@ public class RandomAccessTab {
         
         // Encoding info tag as a long tab delimited string in random access file
         StringBuilder tempOut = new StringBuilder();
+        if(segs[9].equals("") || segs[9].length() < 1)
+            segs[9] = "-"; // ensuring that there are no blank entries
         tempOut.append(segs[2]).append("\t").append(segs[4]).append("\t")
                 .append(segs[5]).append("\t").append(segs[6]).append("\t")
                 .append(segs[7]).append("\t").append(segs[8]).append("\t")
