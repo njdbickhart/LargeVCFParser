@@ -119,7 +119,7 @@ public class MergeTabVCFs {
         List<String> sortedChrs = variantSites.entrySet().stream()
                 .map(Entry::getKey).sorted().collect(toList());
         
-        int linecount = 0;
+        int linecount = 0, firstInfo = 0, secondInfo = 0, firstOnly = 0, secondOnly = 0, both = 0;
         
         try{
             for(String chr : sortedChrs){
@@ -132,10 +132,13 @@ public class MergeTabVCFs {
                         StringBuilder outStr = new StringBuilder();
                         String[] info;
                         // Preferentially draw info from first file
-                        if(firstRand.containsKey(chr, pos, allele))
+                        if(firstRand.containsKey(chr, pos, allele)){
                             info = firstRand.GetInfoTab(chr, pos, allele);
-                        else
+                            firstInfo++;
+                        }else{
                             info = secondRand.GetInfoTab(chr, pos, allele);
+                            secondInfo++;
+                        }
 
                         outStr.append(chr).append("\t").append(pos).append("\t")
                                 .append(info[0]).append("\t").append(allele);
@@ -143,8 +146,15 @@ public class MergeTabVCFs {
                         for(int x = 1; x < info.length; x++){
                             outStr.append("\t").append(info[x]);                                
                         }
+                        
+                        if(firstRand.containsKey(chr, pos, allele) && secondRand.containsKey(chr, pos, allele))
+                            both++;
+                        else if(firstRand.containsKey(chr, pos, allele))
+                            firstOnly++;
+                        else
+                            secondOnly++;
 
-                        outStr.append(firstRand.GetGenotypeOutString(chr, pos, allele)).append("\t");
+                        outStr.append(firstRand.GetGenotypeOutString(chr, pos, allele));
                         outStr.append(secondRand.GetGenotypeOutString(chr, pos, allele)).append(System.lineSeparator());
                         output.write(outStr.toString());
                         linecount++;
@@ -164,5 +174,9 @@ public class MergeTabVCFs {
         }
         
         log.log(Level.INFO, "Completed merger. Printed " + linecount + " lines");
+        log.log(Level.INFO, "Both: " + both);
+        log.log(Level.INFO, "first only: " + firstOnly);
+        log.log(Level.INFO, "second only: " + secondOnly);
+        log.log(Level.INFO, "Infograb, first: " + firstInfo + " second: " + secondInfo);
     }
 }

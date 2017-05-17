@@ -20,6 +20,7 @@ import org.junit.Ignore;
  */
 public class RandomAccessTabTest {
     private static final RandomAccessTab tester = new RandomAccessTab("basetest");
+    private static final RandomAccessTab second = new RandomAccessTab("secondTest");
     
     public RandomAccessTabTest() {
         
@@ -33,6 +34,9 @@ public class RandomAccessTabTest {
         tester.ParseLine(line);
         String alt = "Chr19\t1234\tG\tC\t27.0278\tSNP\tintergenic_region\tMODIFIER\tENSBTAG00000037903\tpM.A\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;1\t0;1\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;1\t0;0\t0;0\t0;0\t0;0\t0;0\t0;1\t0;0\t0;0\t0;0\t0;1\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0";
         tester.ParseLine(alt);
+        
+        second.SetSampleStats("CHR\tPOS\tREF\tALT\tQUAL\tTYPE\tMUTATION\tPRIORITY\tGENE\tAA\tTEST");
+        second.ParseLine("Chr19\t1234\tG\tC\t27\tSNP\tintergenic_region\tMODIFIER\tENSBTAG00000037903\tpM.A\t1;1");
     }
     
     @AfterClass
@@ -92,6 +96,9 @@ public class RandomAccessTabTest {
         String expResult = "0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;1\t0;1\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;1\t0;0\t0;0\t0;0\t0;0\t0;0\t0;1\t0;0\t0;0\t0;0\t0;1\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0\t0;0";
         String result = tester.GetGenotypeOutString(chr, pos, allele);
         assertEquals(expResult, result);
+        
+        String resecond = second.GetGenotypeOutString(chr, 1234, allele);
+        assertEquals(resecond, "1;1");
     }
 
     /**

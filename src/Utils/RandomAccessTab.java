@@ -132,7 +132,7 @@ public class RandomAccessTab {
         StringBuilder outstr = new StringBuilder();
         if(this.containsKey(chr, pos, allele)){            
             String[] gtypes = ConvertBinaryGenotypes(Index.get(chr).get(pos).get(allele));
-            outstr.append(StrUtils.StrArray.Join(gtypes, "\t"));
+            outstr.append("\t").append(StrUtils.StrArray.Join(gtypes, "\t"));
             return outstr.toString();               
         }
         
