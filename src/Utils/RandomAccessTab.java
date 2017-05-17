@@ -5,6 +5,7 @@
  */
 package Utils;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -27,6 +28,7 @@ import java.util.logging.Logger;
  */
 public class RandomAccessTab {
     private static final Logger log = Logger.getLogger(RandomAccessTab.class.getName());
+    private String tempBase;
     private RandomAccessFile temp = null;
     private RandomAccessFile InfoTemp = null;
     private int SampleCount = 0;
@@ -36,12 +38,24 @@ public class RandomAccessTab {
     
     public RandomAccessTab(String outbase){
         Random rand = new Random();
-        Path tempFile = Paths.get(outbase + rand.nextInt(5000) + ".temp");
+        tempBase = outbase + rand.nextInt(5000);
         try {
-            this.temp = new RandomAccessFile(tempFile.toFile(), "rw");
-            this.InfoTemp = new RandomAccessFile(tempFile.toFile(), "rw");
+            File gFile = new File(tempBase + ".gtype.temp");
+            File iFile = new File(tempBase + ".info.temp");
+            gFile.deleteOnExit();
+            iFile.deleteOnExit();
+            this.temp = new RandomAccessFile(gFile, "rw");
+            this.InfoTemp = new RandomAccessFile(iFile, "rw");
         } catch (FileNotFoundException ex) {
             log.log(Level.SEVERE, "Could not create temporary file!", ex);
+        }
+    }
+    public void close(){
+        try{
+            this.temp.close();
+            this.InfoTemp.close();
+        }catch(IOException ex){
+            log.log(Level.SEVERE, "Error closing temp random files!", ex);
         }
     }
     

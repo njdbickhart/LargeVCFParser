@@ -117,14 +117,14 @@ public class MergeTabVCFs {
         
         // Get ordered list of position coordinates and start printing output
         List<String> sortedChrs = variantSites.entrySet().stream()
-                .sorted().map(Entry::getKey).collect(toList());
+                .map(Entry::getKey).sorted().collect(toList());
         
         int linecount = 0;
         
         try{
             for(String chr : sortedChrs){
                 List<Integer> sortedPos = variantSites.get(chr).entrySet().stream()
-                        .sorted().map(Entry::getKey).collect(toList());
+                        .map(Entry::getKey).sorted().collect(toList());
                 for(Integer pos : sortedPos){
                     List<String> sortedAlleles = variantSites.get(chr).get(pos).stream()
                             .sorted().collect(toList());
@@ -155,6 +155,8 @@ public class MergeTabVCFs {
             log.log(Level.SEVERE, "Error writing to file output!", ex);
         }finally{
             try {
+                firstRand.close();
+                secondRand.close();
                 output.close();
             } catch (IOException ex) {
                 log.log(Level.SEVERE, "Error closing output file!", ex);
