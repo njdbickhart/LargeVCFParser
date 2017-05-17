@@ -76,7 +76,7 @@
              minus the .jar extension. It should not have spaces.
              <property name="store.jar.name" value="MyJarName"/>
         -->
-        <property name="store.jar.name" value="LarveVCFParser"/>
+        <property name="store.jar.name" value="LargeVCFParser"/>
 
 
         <!-- don't edit below this line -->

@@ -36,7 +36,7 @@ public class LargeVCFParser {
         SimpleModeCmdLineParser cmd = GetParser();
         cmd.GetAndCheckMode(args);
         
-        setFileHandler(cmd.CurrentMode, args, cmd.GetValue("debug").equals("true"));
+        setFileHandler(cmd.CurrentMode, args, cmd.HasOpt("debug"));
         log.log(Level.INFO, "LargeVCFParser\tversion: " + version);
         log.log(Level.INFO, "Mode: " + cmd.CurrentMode);
         log.log(Level.INFO, "Cmd line options: " + StrArray.Join(args, " "));
