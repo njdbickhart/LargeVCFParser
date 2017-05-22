@@ -74,6 +74,10 @@ public class RandomAccessTab {
     
     public synchronized void ParseLine(String line){
         String[] segs = line.split("\t");
+        if(!StrUtils.NumericCheck.isNumeric(segs[1])){
+            log.log(Level.WARNING, "Skipping line without position number: " + line);
+            return;
+        }
         if(segs[3].contains(","))
             return; // Ignores multiple allele entries for now
         try{
